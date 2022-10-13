@@ -1,0 +1,28 @@
+.app {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btnContainer {
+  display: flex;
+
+  .btnA {
+    background-color: #4c2180;
+    margin-right: 10px;
+  }
+
+  .btnB {
+    background-color: #e57615;
+  }
+}
