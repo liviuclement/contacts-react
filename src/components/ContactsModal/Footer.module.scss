@@ -1,0 +1,11 @@
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+
+  .onlyEven {
+    display: flex;
+    align-items: center;
+    user-select: none;
+  }
+}
