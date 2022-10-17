@@ -6,17 +6,49 @@ import ContactsModalFooter from "./components/ContactsModal/Footer";
 import CustomButton from "./components/Button/Button";
 
 function App() {
-    const [showModalA, setShowModalA] = useState(true);
-    const [showModalB, setShowModalB] = useState(false);
+    const [showModalA, setShowModalA] = useState(window.location.hash === '#ModalA');
+    const [showModalB, setShowModalB] = useState(window.location.hash === '#ModalB');
     const [onlyEven, setOnlyEven] = useState(false);
 
-    console.log({ onlyEven  })
+    const openModalAHandler = () => {
+        setShowModalA(true);
+        window.location.hash = '#ModalA';
+    }
+
+    const openModalBHandler = () => {
+        setShowModalB(true);
+        window.location.hash = '#ModalB';
+    }
+
+    const closeModalAHandler = () => {
+        setShowModalA(false)
+        window.location.hash = '';
+    }
+
+    const closeModalBHandler = () => {
+        setShowModalB(false)
+        window.location.hash = '';
+    }
+
+    const allContactsClickHandler = () => {
+        if (showModalA) return;
+
+        closeModalBHandler();
+        openModalAHandler();
+    }
+
+    const usContactsClickHandler = () => {
+        if (showModalB) return;
+
+        closeModalAHandler();
+        openModalBHandler();
+    }
 
     return (
         <div className={styles.app}>
             <div className={styles.btnContainer}>
                 <CustomButton
-                    onClick={() => setShowModalA(true)}
+                    onClick={openModalAHandler}
                     variant={'purple'}
                     style={{
                         marginRight: 10
@@ -25,7 +57,7 @@ function App() {
                     Button A
                 </CustomButton>
                 <CustomButton
-                    onClick={() => setShowModalB(true)}
+                    onClick={openModalBHandler}
                     variant={'orange'}
                 >
                     Button B
@@ -34,26 +66,18 @@ function App() {
             {showModalA &&
 				<Modal
 					headerText={'Modal A - All Countries'}
-					closeClickHandler={() => setShowModalA(false)}
+					closeClickHandler={closeModalAHandler}
 					bodyComponent={
                         <ContactsModalBody
-
+                            country={''}
+                            onlyEven={onlyEven}
                         />
                     }
 					footerComponent={
                         <ContactsModalFooter
-                            closeClickHandler={() => {
-                                setShowModalA(false)
-                                
-                            }}
-                            usContactsClickHandler={() => {
-                                setShowModalB(true)
-                                setShowModalA(false)
-                            }}
-                            allContactsClickHandler={() => {
-                                setShowModalA(true)
-                                setShowModalB(false)
-                            }}
+                            closeClickHandler={closeModalAHandler}
+                            usContactsClickHandler={usContactsClickHandler}
+                            allContactsClickHandler={allContactsClickHandler}
                             onCheckboxPressHandler={() => setOnlyEven(prevState => !prevState)}
                             onlyEven={onlyEven}
                         />
@@ -62,20 +86,19 @@ function App() {
             }
             {showModalB &&
 				<Modal
-					closeClickHandler={() => setShowModalB(false)}
+					closeClickHandler={closeModalBHandler}
 					headerText={'Modal B - US'}
-					bodyComponent={<ContactsModalBody/>}
+					bodyComponent={
+                        <ContactsModalBody
+                            country={'us'}
+                            onlyEven={onlyEven}
+                        />
+                    }
 					footerComponent={
                         <ContactsModalFooter
-                            closeClickHandler={() => setShowModalB(false)}
-                            usContactsClickHandler={() => {
-                                setShowModalB(true)
-                                setShowModalA(false)
-                            }}
-                            allContactsClickHandler={() => {
-                                setShowModalA(true)
-                                setShowModalB(false)
-                            }}
+                            closeClickHandler={closeModalBHandler}
+                            usContactsClickHandler={usContactsClickHandler}
+                            allContactsClickHandler={allContactsClickHandler}
                             onCheckboxPressHandler={() => setOnlyEven(prevState => !prevState)}
                             onlyEven={onlyEven}
                         />
