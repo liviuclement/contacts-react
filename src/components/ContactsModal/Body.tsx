@@ -22,7 +22,7 @@ const ContactsModalBody = (props: Props) => {
     const isLoading = status === 'loading';
 
     useEffect(() => {
-        if (page > 1 && !next || isLoading) return;
+        if ((page > 1 && !next) || isLoading) return;
 
         dispatch(getContacts({ country, query, page, onlyEven: onlyEven ? 1 : 0 }))
     }, [page])

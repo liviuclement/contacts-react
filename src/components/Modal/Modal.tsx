@@ -6,17 +6,18 @@ interface Props {
     headerText: string,
     bodyComponent: ReactComponentElement<any>,
     footerComponent?: ReactComponentElement<any>
+    variant?: 'small'
 }
 
 const Modal = (props: Props) => {
-    const { headerText, bodyComponent, footerComponent, closeClickHandler, } = props;
+    const { variant, headerText, bodyComponent, footerComponent, closeClickHandler, } = props;
 
     return (
         <div
             className={styles.modalBackdrop}
             onClick={closeClickHandler}
         >
-            <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={`${styles.modal} ${variant ? styles[variant] : ''}`} onClick={e => e.stopPropagation()}>
                 <div
                     className={styles.header}
                 >

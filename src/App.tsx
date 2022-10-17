@@ -22,7 +22,7 @@ function App() {
 
     const closeModalAHandler = () => {
         setShowModalA(false)
-        window.location.hash = '';
+        window.location.hash = ''
     }
 
     const closeModalBHandler = () => {

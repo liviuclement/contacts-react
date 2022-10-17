@@ -1,7 +1,9 @@
-import React, { ForwardedRef, forwardRef } from 'react';
+import React, { ForwardedRef, forwardRef, useState } from 'react';
 import styles from './ContactList.module.scss';
 import ContactItem from "../ContactItem/ContactItem";
 import { Contact } from "../../types";
+import Modal from "../Modal/Modal";
+import ContactModalBody from "../ContactModal/Body";
 
 interface Props {
     contacts: Contact[],
