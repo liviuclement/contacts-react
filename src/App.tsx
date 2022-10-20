@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './App.module.scss';
-import Modal from "./components/Modal/Modal";
-import ContactsModalBody from "./components/ContactsModal/Body";
-import ContactsModalFooter from "./components/ContactsModal/Footer";
 import CustomButton from "./components/Button/Button";
+import { useLocation, useNavigate } from "react-router-dom";
+import ModalA from "./components/ContactsModal/ModalA";
+import ModalB from "./components/ContactsModal/ModalB";
 
 function App() {
-    const [showModalA, setShowModalA] = useState(window.location.hash === '#ModalA');
-    const [showModalB, setShowModalB] = useState(window.location.hash === '#ModalB');
+    const [showModalA, setShowModalA] = useState(false);
+    const [showModalB, setShowModalB] = useState(false);
+    const navigate = useNavigate();
+    const { hash } = useLocation();
     const [onlyEven, setOnlyEven] = useState(false);
+
+    useEffect(() => {
+        setShowModalA(hash === '#ModalA');
+        setShowModalB(hash === '#ModalB')
+    }, [hash])
 
     const openModalAHandler = () => {
         setShowModalA(true);
-        window.location.hash = '#ModalA';
+        navigate({ hash: '#ModalA' });
     }
 
     const openModalBHandler = () => {
         setShowModalB(true);
-        window.location.hash = '#ModalB';
+        navigate({ hash: '#ModalB' });
     }
 
     const closeModalAHandler = () => {
         setShowModalA(false)
-        window.location.hash = ''
+        navigate({ hash: '' });
     }
 
     const closeModalBHandler = () => {
         setShowModalB(false)
-        window.location.hash = '';
+        navigate({ hash: '' });
     }
 
     const allContactsClickHandler = () => {
@@ -63,48 +70,22 @@ function App() {
                     Button B
                 </CustomButton>
             </div>
-            {showModalA &&
-				<Modal
-					headerText={'Modal A - All Countries'}
-					closeClickHandler={closeModalAHandler}
-					bodyComponent={
-                        <ContactsModalBody
-                            country={''}
-                            onlyEven={onlyEven}
-                        />
-                    }
-					footerComponent={
-                        <ContactsModalFooter
-                            closeClickHandler={closeModalAHandler}
-                            usContactsClickHandler={usContactsClickHandler}
-                            allContactsClickHandler={allContactsClickHandler}
-                            onCheckboxPressHandler={() => setOnlyEven(prevState => !prevState)}
-                            onlyEven={onlyEven}
-                        />
-                    }
-				/>
-            }
-            {showModalB &&
-				<Modal
-					closeClickHandler={closeModalBHandler}
-					headerText={'Modal B - US'}
-					bodyComponent={
-                        <ContactsModalBody
-                            country={'us'}
-                            onlyEven={onlyEven}
-                        />
-                    }
-					footerComponent={
-                        <ContactsModalFooter
-                            closeClickHandler={closeModalBHandler}
-                            usContactsClickHandler={usContactsClickHandler}
-                            allContactsClickHandler={allContactsClickHandler}
-                            onCheckboxPressHandler={() => setOnlyEven(prevState => !prevState)}
-                            onlyEven={onlyEven}
-                        />
-                    }
-				/>
-            }
+            <ModalA
+                showModalA={showModalA}
+                onlyEven={onlyEven}
+                closeClickHandler={closeModalAHandler}
+                usContactsClickHandler={usContactsClickHandler}
+                allContactsClickHandler={allContactsClickHandler}
+                setOnlyEven={setOnlyEven}
+            />
+            <ModalB
+                showModalB={showModalB}
+                onlyEven={onlyEven}
+                closeClickHandler={closeModalBHandler}
+                usContactsClickHandler={usContactsClickHandler}
+                allContactsClickHandler={allContactsClickHandler}
+                setOnlyEven={setOnlyEven}
+            />
         </div>
     );
 }

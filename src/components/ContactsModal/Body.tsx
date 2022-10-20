@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import styles from './Body.module.scss';
 import ContactList from "../ContactList/ContactList";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -12,57 +12,47 @@ interface Props {
 const ContactsModalBody = (props: Props) => {
     const { country, onlyEven } = props;
     const [query, setQuery] = useState('');
+    const [queryInput, setQueryInput] = useState('');
     const [page, setPage] = useState(1);
     const [inputTimeout, setInputTimeout] = useState<any>(null);
     const dispatch = useAppDispatch();
-    const { status, data } = useAppSelector(state => state.contacts);
-    const { contacts, next } = data;
+    const { status, contacts, count } = useAppSelector(state => state.contacts);
     const listRef = useRef<any>(null);
-    const firstRender = useRef(true);
+    const prevPageRef = useRef(0);
     const isLoading = status === 'loading';
 
     useEffect(() => {
-        if ((page > 1 && !next) || isLoading) return;
-
-        dispatch(getContacts({ country, query, page, onlyEven: onlyEven ? 1 : 0 }))
-    }, [page])
-
-    useEffect(() => {
-        if (firstRender.current) {
-            firstRender.current = false;
-            return;
-        }
-
-        getContactsByFilters(query, 1)
-    }, [onlyEven])
+        const hasPageChanged = prevPageRef.current !== page;
+        dispatch(getContacts({ country, query, page: hasPageChanged ? page : 1, onlyEven: onlyEven ? 1 : 0 }))
+    }, [country, query, page, onlyEven])
 
     useEffect(() => {
-        if (!listRef.current) {
-            return;
-        }
-
         listRef.current.addEventListener('scroll', scrollCallback);
 
         return () => window.removeEventListener('scroll', scrollCallback)
-    }, [])
+    }, [setPage, count])
 
-
-    const scrollCallback = () => {
+    const scrollCallback = useCallback(() => {
         const scrollHeight = listRef.current.scrollHeight;
         const scrollTop = listRef.current.scrollTop;
         const clientHeight = listRef.current.clientHeight;
 
         if (scrollTop === (scrollHeight - clientHeight)) {
-            setPage(prevPage => prevPage + 1);
-        }
-    }
+            setPage(prevPage => {
+                //check if current page is last
+                if (prevPage * 10 < count) {
+                    prevPageRef.current = prevPage;
+                    return prevPage + 1;
+                }
 
-    const getContactsByFilters = (queryArg: string, pageArg: number) => {
-        if (page === 1) {
-            dispatch(getContacts({ country, query: queryArg, page: pageArg, onlyEven: onlyEven ? 1 : 0 }))
-        } else {
-            setPage(1);
+                return prevPage;
+            });
         }
+    },[count])
+
+    const setQueryHandler = (query: string) => {
+        setQuery(query);
+        setPage(1);
     }
 
     const queryChangeHandler = (event: ChangeEvent<any>, auto: boolean = true) => {
@@ -72,14 +62,14 @@ const ContactsModalBody = (props: Props) => {
 
         if (auto) {
             const timeout = setTimeout(() => {
-                getContactsByFilters(event.target.value, 1)
+                setQueryHandler(event.target.value)
             }, 250);
 
-            setQuery(event.target.value);
             setInputTimeout(timeout);
         } else {
-            getContactsByFilters(query, 1)
+            setQueryHandler(event.target.value)
         }
+        setQueryInput(event.target.value)
     }
 
     return (
@@ -89,7 +79,7 @@ const ContactsModalBody = (props: Props) => {
                     type='text'
                     placeholder='Search contacts'
                     onChange={queryChangeHandler}
-                    value={query}
+                    value={queryInput}
                 />
                 <button
                     onClick={(e) => queryChangeHandler(e, false)}

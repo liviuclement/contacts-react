@@ -1,16 +1,19 @@
-import React, { ReactComponentElement } from 'react';
+import React, { Children, PropsWithChildren, ReactChildren, ReactComponentElement } from 'react';
 import styles from './Modal.module.scss';
 
-interface Props {
+interface ModalProps {
+    isOpen: boolean;
     closeClickHandler: () => void,
     headerText: string,
-    bodyComponent: ReactComponentElement<any>,
-    footerComponent?: ReactComponentElement<any>
     variant?: 'small'
 }
 
-const Modal = (props: Props) => {
-    const { variant, headerText, bodyComponent, footerComponent, closeClickHandler, } = props;
+const Modal = (props: ModalProps & PropsWithChildren) => {
+    const { isOpen, variant, headerText, children, closeClickHandler, } = props;
+
+    if (!isOpen) {
+        return null;
+    }
 
     return (
         <div
@@ -31,23 +34,42 @@ const Modal = (props: Props) => {
                         ×
                     </div>
                 </div>
-                {!!bodyComponent &&
-					<div
-						className={styles.body}
-					>
-                        {bodyComponent}
-					</div>
-                }
-                {!!footerComponent &&
-					<div
-						className={styles.footer}
-					>
-                        {footerComponent}
-					</div>
-                }
+                {children}
             </div>
         </div>
     );
 };
+
+interface BodyProps extends PropsWithChildren {
+
+}
+
+const Body = (props: BodyProps) => {
+    const { children } = props;
+
+    return <div
+        className={styles.body}
+    >
+        {children}
+    </div>
+}
+
+interface FooterProps extends PropsWithChildren {
+
+}
+
+const Footer = (props: FooterProps) => {
+    const { children } = props;
+
+    return <div
+        className={styles.footer}
+    >
+        {children}
+    </div>
+}
+
+
+Modal.Body = Body;
+Modal.Footer = Footer;
 
 export default Modal;

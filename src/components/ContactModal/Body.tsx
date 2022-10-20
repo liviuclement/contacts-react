@@ -1,14 +1,19 @@
 import React from 'react';
 import styles from './Body.module.scss';
 
-interface Props {
+interface ContactDetails {
     id: number,
-    fullName: string,
-    phoneNumber: string,
+    name: string,
+    phone: string,
+}
+
+interface Props {
+    selectedContact: ContactDetails
 }
 
 const ContactModalBody = (props: Props) => {
-    const { id, fullName, phoneNumber } = props;
+    const { selectedContact } = props;
+    const { id, name, phone } = selectedContact;
 
     return (
         <div
@@ -20,11 +25,11 @@ const ContactModalBody = (props: Props) => {
             </div>
             <div className={styles.item}>
                 <h4>Full Name</h4>
-                <p>{fullName}</p>
+                <p>{name}</p>
             </div>
             <div className={styles.item}>
                 <h4>Phone Number</h4>
-                <p>{phoneNumber}</p>
+                <p>{phone}</p>
             </div>
         </div>
     );

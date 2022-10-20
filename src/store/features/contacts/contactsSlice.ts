@@ -3,21 +3,20 @@ import axios from 'axios';
 import { API_URL } from "../../../env";
 import { Contact } from "../../../types";
 
-export const getContacts = createAsyncThunk('contacts/fetchContacts', async (args: { country: string, query: string, page: number, onlyEven: number }, { rejectWithValue }) => {
+interface GetContactsArgs {
+    country: string,
+    query: string,
+    page: number,
+    onlyEven: number
+}
+
+export const getContacts = createAsyncThunk('contacts/fetchContacts', async (args: GetContactsArgs) => {
         const { country, query, page, onlyEven } = args;
+        const result = await axios.get<GetContactsResult>(`${API_URL}/contacts?country=${country}&query=${query}&onlyEven=${onlyEven}&page=${page}`)
 
-        try {
-            const result = await axios.get<GetContactsResult>(`${API_URL}/contacts?country=${country}&query=${query}&onlyEven=${onlyEven}&page=${page}`)
-
-            return {
-                data: result.data
-            }
-        } catch (err: any) {
-            return rejectWithValue(err.message)
-        }
+        return result.data;
     }
 )
-
 
 interface GetContactsResult {
     contacts: Contact[],
@@ -26,25 +25,21 @@ interface GetContactsResult {
     next: boolean,
 }
 
-interface Contacts {
-    data: {
-        contacts: Contact[],
-        count: number,
-        page: number,
-        next: boolean,
-    },
+interface ContactsState {
+    contacts: Contact[],
+    count: number,
+    page: number,
+    next: boolean,
     status: string,
     error: string,
 
 }
 
-const initialState: Contacts = {
-    data: {
-        contacts: [],
-        count: 0,
-        page: 0,
-        next: false,
-    },
+const initialState: ContactsState = {
+    contacts: [],
+    count: 0,
+    page: 0,
+    next: false,
     status: 'idle',
     error: '',
 }
@@ -59,20 +54,17 @@ export const contactsSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(getContacts.fulfilled, (state, action) => {
-                const { data } = action.payload;
+                const { contacts, count, page, next } = action.payload;
 
-                if (data.page > 1) {
-                    state.data = {
-                        ...data,
-                        contacts: [...state.data.contacts, ...data.contacts]
-                    }
+                if (page > 1) {
+                    state.contacts = [...state.contacts, ...contacts];
                 } else {
-                    state.data = {
-                        ...data,
-                        contacts: [...data.contacts]
-                    }
+                    state.contacts = [...contacts];
                 }
 
+                state.count = count;
+                state.page = page;
+                state.next = next;
                 state.status = 'succeeded';
             })
             .addCase(getContacts.rejected, (state, action) => {

@@ -7,16 +7,16 @@ interface Props {
     id: number,
     name: string,
     phone: string,
+    onClick: (id: number, name: string, phone: string) => void,
 }
 
 const ContactItem = (props: Props) => {
-    const { id, name, phone } = props;
-    const [showItemModal, setShowItemModal] = useState(false);
+    const { id, name, phone, onClick } = props;
 
     return (
         <div
             className={styles.contactItem}
-            onClick={() => setShowItemModal(true)}
+            onClick={() => onClick(id, name, phone)}
         >
             <div>
                 <h4>{name}</h4>
@@ -27,18 +27,6 @@ const ContactItem = (props: Props) => {
             >
                 ID: {id}
             </div>
-            {showItemModal &&
-				<Modal
-                    variant={'small'}
-					closeClickHandler={() => setShowItemModal(false)}
-					headerText={'Contact Info'}
-					bodyComponent={<ContactModalBody
-                        id={id}
-                        fullName={name}
-                        phoneNumber={phone}
-                    />}
-				/>
-            }
         </div>
     );
 };
