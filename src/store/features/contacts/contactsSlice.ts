@@ -12,6 +12,15 @@ interface GetContactsArgs {
 
 export const getContacts = createAsyncThunk('contacts/fetchContacts', async (args: GetContactsArgs) => {
         const { country, query, page, onlyEven } = args;
+        const result = await axios.get<GetContactsResult>(`${API_URL}/contacts?country=${country}&query=${query}&onlyEven=${onlyEven}&page=${1}`)
+
+        return result.data;
+    }
+)
+
+export const getMoreContacts = createAsyncThunk('contacts/fetchMoreContacts', async (args: GetContactsArgs) => {
+        const { country, query, page, onlyEven } = args;
+
         const result = await axios.get<GetContactsResult>(`${API_URL}/contacts?country=${country}&query=${query}&onlyEven=${onlyEven}&page=${page}`)
 
         return result.data;
@@ -56,18 +65,29 @@ export const contactsSlice = createSlice({
             .addCase(getContacts.fulfilled, (state, action) => {
                 const { contacts, count, page, next } = action.payload;
 
-                if (page > 1) {
-                    state.contacts = [...state.contacts, ...contacts];
-                } else {
-                    state.contacts = [...contacts];
-                }
-
+                state.contacts = [...contacts];
                 state.count = count;
                 state.page = page;
                 state.next = next;
                 state.status = 'succeeded';
             })
             .addCase(getContacts.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload as string;
+            })
+            .addCase(getMoreContacts.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getMoreContacts.fulfilled, (state, action) => {
+                const { contacts, count, page, next } = action.payload;
+
+                state.contacts = [...state.contacts, ...contacts];
+                state.count = count;
+                state.page = page;
+                state.next = next;
+                state.status = 'succeeded';
+            })
+            .addCase(getMoreContacts.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload as string;
             })

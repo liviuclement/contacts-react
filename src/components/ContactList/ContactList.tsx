@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, useState } from 'react';
+import React, { ForwardedRef, forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styles from './ContactList.module.scss';
 import ContactItem from "../ContactItem/ContactItem";
 import { Contact } from "../../types";
@@ -8,12 +8,32 @@ import ContactModalBody from "../ContactModal/Body";
 interface Props {
     contacts: Contact[],
     isLoading: boolean,
+    onScroll: () => void,
 }
 
-const ContactList = forwardRef((props: Props, ref: ForwardedRef<any>) => {
-    const { contacts, isLoading } = props;
+const ContactList = (props: Props) => {
+    const { contacts, isLoading, onScroll } = props;
     const [showContactModal, setShowContactModal] = useState(false);
     const [selectedContact, setSelectedContact] = useState<any>();
+    const listRef = useRef<any>(null);
+
+    const scrollCallback = useCallback(() => {
+        const scrollHeight = listRef.current.scrollHeight;
+        const scrollTop = listRef.current.scrollTop;
+        const clientHeight = listRef.current.clientHeight;
+
+        if (scrollTop === (scrollHeight - clientHeight)) {
+            onScroll();
+        }
+    }, [onScroll])
+
+    useLayoutEffect(() => {
+        listRef.current.addEventListener('scroll', scrollCallback);
+
+        return () => {
+            listRef.current.removeEventListener('scroll', scrollCallback)
+        }
+    }, [scrollCallback])
 
     const itemClickHandler = (id: number, name: string, phone: string) => {
         setShowContactModal(true);
@@ -36,7 +56,7 @@ const ContactList = forwardRef((props: Props, ref: ForwardedRef<any>) => {
         <>
             <div
                 className={styles.contactList}
-                ref={ref}
+                ref={listRef}
             >
                 {mapContacts()}
                 {isLoading &&
@@ -58,6 +78,6 @@ const ContactList = forwardRef((props: Props, ref: ForwardedRef<any>) => {
             </Modal>
         </>
     );
-});
+};
 
 export default ContactList;
