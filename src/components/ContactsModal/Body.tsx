@@ -1,99 +1,86 @@
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import styles from './Body.module.scss';
-import ContactList from "../ContactList/ContactList";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { getContacts } from "../../store/features/contacts/contactsSlice";
+import ContactList from '../ContactList/ContactList';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getContacts } from '../../store/features/contacts/contactsSlice';
 
 interface Props {
-    country: '' | 'us',
-    onlyEven: boolean,
+  country: '' | 'us';
+  onlyEven: boolean;
 }
 
 const ContactsModalBody = (props: Props) => {
-    const { country, onlyEven } = props;
-    const [query, setQuery] = useState('');
-    const [queryInput, setQueryInput] = useState('');
-    const [page, setPage] = useState(1);
-    const [inputTimeout, setInputTimeout] = useState<any>(null);
-    const dispatch = useAppDispatch();
-    const { status, contacts, count } = useAppSelector(state => state.contacts);
-    const listRef = useRef<any>(null);
-    const prevPageRef = useRef(0);
-    const isLoading = status === 'loading';
+  const { country, onlyEven } = props;
 
-    useEffect(() => {
-        const hasPageChanged = prevPageRef.current !== page;
-        dispatch(getContacts({ country, query, page: hasPageChanged ? page : 1, onlyEven: onlyEven ? 1 : 0 }))
-    }, [country, query, page, onlyEven])
+  const [searchValue, setSearchValue] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
-        listRef.current.addEventListener('scroll', scrollCallback);
+  const inputTimeoutRef = useRef<any>(null);
+  const firstRenderRef = useRef<boolean>(true);
+  const delayRef = useRef<number>(0);
 
-        return () => window.removeEventListener('scroll', scrollCallback)
-    }, [setPage, count])
+  const dispatch = useAppDispatch();
+  const { status, contacts, count } = useAppSelector((state) => state.contacts);
 
-    const scrollCallback = useCallback(() => {
-        const scrollHeight = listRef.current.scrollHeight;
-        const scrollTop = listRef.current.scrollTop;
-        const clientHeight = listRef.current.clientHeight;
+  const isLoading = status === 'loading';
 
-        if (scrollTop === (scrollHeight - clientHeight)) {
-            setPage(prevPage => {
-                //check if current page is last
-                if (prevPage * 10 < count) {
-                    prevPageRef.current = prevPage;
-                    return prevPage + 1;
-                }
-
-                return prevPage;
-            });
-        }
-    },[count])
-
-    const setQueryHandler = (query: string) => {
-        setQuery(query);
-        setPage(1);
-    }
-
-    const queryChangeHandler = (event: ChangeEvent<any>, auto: boolean = true) => {
-        if (inputTimeout) {
-            clearTimeout(inputTimeout);
-        }
-
-        if (auto) {
-            const timeout = setTimeout(() => {
-                setQueryHandler(event.target.value)
-            }, 250);
-
-            setInputTimeout(timeout);
-        } else {
-            setQueryHandler(event.target.value)
-        }
-        setQueryInput(event.target.value)
-    }
-
-    return (
-        <div className={styles.body}>
-            <div className={styles.inputContainer}>
-                <input
-                    type='text'
-                    placeholder='Search contacts'
-                    onChange={queryChangeHandler}
-                    value={queryInput}
-                />
-                <button
-                    onClick={(e) => queryChangeHandler(e, false)}
-                >
-                    Search
-                </button>
-            </div>
-            <ContactList
-                ref={listRef}
-                contacts={contacts}
-                isLoading={isLoading}
-            />
-        </div>
+  const searchHandler = useCallback(() => {
+    setCurrentPage(1);
+    dispatch(
+      getContacts({
+        country,
+        query: searchValue,
+        page: 1,
+        onlyEven: onlyEven ? 1 : 0,
+      })
     );
+    inputTimeoutRef.current = null;
+  }, [searchValue, onlyEven, country, dispatch]);
+
+  const loadMoreHandler = useCallback(() => {
+    setCurrentPage((prevState) => prevState + 1);
+    dispatch(
+      getContacts({
+        country,
+        query: searchValue,
+        page: currentPage + 1,
+        onlyEven: onlyEven ? 1 : 0,
+      })
+    );
+  }, [country, currentPage, dispatch, onlyEven, searchValue]);
+
+  useEffect(() => {
+    if (firstRenderRef.current === true) {
+      firstRenderRef.current = false;
+      return;
+    }
+    delayRef.current = 1000;
+  }, [searchValue]);
+
+  useEffect(() => {
+    inputTimeoutRef.current = setTimeout(searchHandler, delayRef.current);
+
+    if (delayRef.current > 0) {
+      delayRef.current = 0;
+    }
+
+    return () => clearTimeout(inputTimeoutRef.current);
+  }, [searchValue, searchHandler]);
+
+  return (
+    <div className={styles.body}>
+      <div className={styles.inputContainer}>
+        <input
+          type='text'
+          placeholder='Search contacts'
+          onChange={(e) => setSearchValue(e.target.value)}
+          value={searchValue}
+        />
+        <button onClick={searchHandler}>Search</button>
+      </div>
+      <ContactList contacts={contacts} isLoading={isLoading} onLoadMore={loadMoreHandler} />
+    </div>
+  );
 };
 
 export default ContactsModalBody;
