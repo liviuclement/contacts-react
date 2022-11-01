@@ -7,7 +7,7 @@ interface Props {
     id: number,
     name: string,
     phone: string,
-    onClick: (id: number, name: string, phone: string) => void,
+    onClick: () => void,
 }
 
 const ContactItem = (props: Props) => {
@@ -16,7 +16,7 @@ const ContactItem = (props: Props) => {
     return (
         <div
             className={styles.contactItem}
-            onClick={() => onClick(id, name, phone)}
+            onClick={onClick}
         >
             <div>
                 <h4>{name}</h4>

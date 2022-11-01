@@ -3,33 +3,33 @@ import styles from './Footer.module.scss';
 import CustomButton from "../Button/Button";
 
 interface Props {
-    closeClickHandler: () => void,
-    allContactsClickHandler: () => void,
-    usContactsClickHandler: () => void,
-    onCheckboxPressHandler: () => void,
+    onClose: () => void,
+    onUsContactsClick: () => void,
+    onAllContactsClick: () => void,
+    onCheckboxPress: () => void,
     onlyEven: boolean
 }
 
 const ContactsModalFooter = (props: Props) => {
     const {
         onlyEven,
-        closeClickHandler,
-        allContactsClickHandler,
-        usContactsClickHandler,
-        onCheckboxPressHandler
+        onClose,
+        onUsContactsClick,
+        onAllContactsClick,
+        onCheckboxPress
     } = props;
 
     return (
         <div className={styles.modalFooter}>
             <div className={styles.onlyEven}>
-                <input type='checkbox' id={'only-even'} checked={onlyEven} onChange={onCheckboxPressHandler}/>
+                <input type='checkbox' id={'only-even'} checked={onlyEven} onChange={onCheckboxPress}/>
                 <label htmlFor={'only-even'}>Only even</label>
             </div>
             <div
                 className={styles.btnContainer}
             >
                 <CustomButton
-                    onClick={allContactsClickHandler}
+                    onClick={onAllContactsClick}
                     variant={'purple'}
                     style={{
                         marginRight: 10
@@ -38,7 +38,7 @@ const ContactsModalFooter = (props: Props) => {
                     All Contacts
                 </CustomButton>
                 <CustomButton
-                    onClick={usContactsClickHandler}
+                    onClick={onUsContactsClick}
                     variant={'orange'}
                     style={{
                         marginRight: 10
@@ -47,7 +47,7 @@ const ContactsModalFooter = (props: Props) => {
                     US Contacts
                 </CustomButton>
                 <CustomButton
-                    onClick={closeClickHandler}
+                    onClick={onClose}
                     variant={'whitePurple'}
                 >
                     Close

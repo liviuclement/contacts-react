@@ -8,11 +8,11 @@ import ContactModalBody from "../ContactModal/Body";
 interface Props {
     contacts: Contact[],
     isLoading: boolean,
-    onScroll: () => void,
+    onLoadMore: () => void,
 }
 
 const ContactList = (props: Props) => {
-    const { contacts, isLoading, onScroll } = props;
+    const { contacts, isLoading, onLoadMore } = props;
     const [showContactModal, setShowContactModal] = useState(false);
     const [selectedContact, setSelectedContact] = useState<any>();
     const listRef = useRef<any>(null);
@@ -23,9 +23,9 @@ const ContactList = (props: Props) => {
         const clientHeight = listRef.current.clientHeight;
 
         if (scrollTop === (scrollHeight - clientHeight)) {
-            onScroll();
+            onLoadMore();
         }
-    }, [onScroll])
+    }, [onLoadMore])
 
     useLayoutEffect(() => {
         listRef.current.addEventListener('scroll', scrollCallback);
@@ -48,7 +48,7 @@ const ContactList = (props: Props) => {
             id={contact.id}
             name={`${contact.first_name} ${contact.last_name}`}
             phone={contact.phone}
-            onClick={itemClickHandler}
+            onClick={() => itemClickHandler(contact.id, `${contact.first_name} ${contact.last_name}`, contact.phone)}
         />
     ));
 
@@ -69,8 +69,8 @@ const ContactList = (props: Props) => {
             <Modal
                 isOpen={showContactModal}
                 variant={'small'}
-                closeClickHandler={() => setShowContactModal(false)}
-                headerText={'Contact Info'}
+                onClose={() => setShowContactModal(false)}
+                title={'Contact Info'}
             >
                 <Modal.Body>
                     <ContactModalBody selectedContact={selectedContact}/>

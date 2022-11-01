@@ -24,7 +24,7 @@ const ContactsModalBody = (props: Props) => {
         setPage(1)
     }, [country, query, onlyEven])
 
-    const onScroll = useCallback(() => {
+    const loadMoreHandler = useCallback(() => {
         if (page * 10 < count && !isLoading) {
             dispatch(getMoreContacts({ country, query, page: page + 1, onlyEven: onlyEven ? 1 : 0 }))
             setPage(prevPage => prevPage + 1);
@@ -64,7 +64,7 @@ const ContactsModalBody = (props: Props) => {
                 </button>
             </div>
             <ContactList
-                onScroll={onScroll}
+                onLoadMore={loadMoreHandler}
                 contacts={contacts}
                 isLoading={isLoading}
             />

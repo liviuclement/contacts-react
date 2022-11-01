@@ -18,36 +18,26 @@ function App() {
     }, [hash])
 
     const openModalAHandler = () => {
-        setShowModalA(true);
         navigate({ hash: '#ModalA' });
     }
 
     const openModalBHandler = () => {
-        setShowModalB(true);
         navigate({ hash: '#ModalB' });
     }
 
-    const closeModalAHandler = () => {
-        setShowModalA(false)
-        navigate({ hash: '' });
-    }
-
-    const closeModalBHandler = () => {
-        setShowModalB(false)
+    const closeModalHandler = () => {
         navigate({ hash: '' });
     }
 
     const allContactsClickHandler = () => {
         if (showModalA) return;
 
-        closeModalBHandler();
         openModalAHandler();
     }
 
     const usContactsClickHandler = () => {
         if (showModalB) return;
 
-        closeModalAHandler();
         openModalBHandler();
     }
 
@@ -73,18 +63,18 @@ function App() {
             <ModalA
                 showModalA={showModalA}
                 onlyEven={onlyEven}
-                closeClickHandler={closeModalAHandler}
-                usContactsClickHandler={usContactsClickHandler}
-                allContactsClickHandler={allContactsClickHandler}
-                setOnlyEven={setOnlyEven}
+                onClose={closeModalHandler}
+                onUsContactsClick={usContactsClickHandler}
+                onAllContactsClick={allContactsClickHandler}
+                onOnlyEvenClick={setOnlyEven}
             />
             <ModalB
                 showModalB={showModalB}
                 onlyEven={onlyEven}
-                closeClickHandler={closeModalBHandler}
-                usContactsClickHandler={usContactsClickHandler}
-                allContactsClickHandler={allContactsClickHandler}
-                setOnlyEven={setOnlyEven}
+                onClose={closeModalHandler}
+                onUsContactsClick={usContactsClickHandler}
+                onAllContactsClick={allContactsClickHandler}
+                onOnlyEvenClick={setOnlyEven}
             />
         </div>
     );

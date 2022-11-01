@@ -3,33 +3,33 @@ import styles from './Modal.module.scss';
 
 interface ModalProps {
     isOpen: boolean;
-    closeClickHandler: () => void,
-    headerText: string,
+    onClose: () => void,
+    title: string,
     variant?: 'small'
 }
 
 const Modal = (props: ModalProps & PropsWithChildren) => {
-    const { isOpen, variant, headerText, children, closeClickHandler, } = props;
+    const { isOpen, variant, title, children, onClose, } = props;
 
     if (!isOpen) {
-        return null;
+        return <></>;
     }
 
     return (
         <div
             className={styles.modalBackdrop}
-            onClick={closeClickHandler}
+            onClick={onClose}
         >
             <div className={`${styles.modal} ${variant ? styles[variant] : ''}`} onClick={e => e.stopPropagation()}>
                 <div
                     className={styles.header}
                 >
                     <h1>
-                        {headerText}
+                        {title}
                     </h1>
                     <div
                         className={styles.closeBtn}
-                        onClick={closeClickHandler}
+                        onClick={onClose}
                     >
                         ×
                     </div>

@@ -6,27 +6,27 @@ import ContactsModalFooter from "./Footer";
 interface Props {
     showModalA: boolean,
     onlyEven: boolean,
-    closeClickHandler: () => void
-    usContactsClickHandler: () => void,
-    allContactsClickHandler: () => void,
-    setOnlyEven: Dispatch<SetStateAction<boolean>>,
+    onClose: () => void
+    onUsContactsClick: () => void,
+    onAllContactsClick: () => void,
+    onOnlyEvenClick: Dispatch<SetStateAction<boolean>>,
 }
 
 const ModalA = (props: Props) => {
     const {
         showModalA,
         onlyEven,
-        closeClickHandler,
-        usContactsClickHandler,
-        allContactsClickHandler,
-        setOnlyEven
+        onClose,
+        onUsContactsClick,
+        onAllContactsClick,
+        onOnlyEvenClick
     } = props;
 
     return (
         <Modal
             isOpen={showModalA}
-            headerText={'Modal A - All Countries'}
-            closeClickHandler={closeClickHandler}
+            title={'Modal A - All Countries'}
+            onClose={onClose}
         >
             <Modal.Body>
                 <ContactsModalBody
@@ -36,10 +36,10 @@ const ModalA = (props: Props) => {
             </Modal.Body>
             <Modal.Footer>
                 <ContactsModalFooter
-                    closeClickHandler={closeClickHandler}
-                    usContactsClickHandler={usContactsClickHandler}
-                    allContactsClickHandler={allContactsClickHandler}
-                    onCheckboxPressHandler={() => setOnlyEven((prevState: boolean) => !prevState)}
+                    onClose={onClose}
+                    onUsContactsClick={onUsContactsClick}
+                    onAllContactsClick={onAllContactsClick}
+                    onCheckboxPress={() => onOnlyEvenClick((prevState: boolean) => !prevState)}
                     onlyEven={onlyEven}
                 />
             </Modal.Footer>
