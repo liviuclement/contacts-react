@@ -1,58 +1,83 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import styles from './App.module.scss';
+import CustomButton from "./components/Button/Button";
+import { useLocation, useNavigate } from "react-router-dom";
+import ModalA from "./components/ContactsModal/ModalA";
+import ModalB from "./components/ContactsModal/ModalB";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+    const [showModalA, setShowModalA] = useState(false);
+    const [showModalB, setShowModalB] = useState(false);
+    const navigate = useNavigate();
+    const { hash } = useLocation();
+    const [onlyEven, setOnlyEven] = useState(false);
+
+    useEffect(() => {
+        setShowModalA(hash === '#ModalA');
+        setShowModalB(hash === '#ModalB')
+    }, [hash])
+
+    const openModalAHandler = () => {
+        navigate({ hash: '#ModalA' });
+    }
+
+    const openModalBHandler = () => {
+        navigate({ hash: '#ModalB' });
+    }
+
+    const closeModalHandler = () => {
+        navigate({ hash: '' });
+    }
+
+    const allContactsClickHandler = () => {
+        if (showModalA) return;
+
+        openModalAHandler();
+    }
+
+    const usContactsClickHandler = () => {
+        if (showModalB) return;
+
+        openModalBHandler();
+    }
+
+    return (
+        <div className={styles.app}>
+            <div className={styles.btnContainer}>
+                <CustomButton
+                    onClick={openModalAHandler}
+                    variant={'purple'}
+                    style={{
+                        marginRight: 10
+                    }}
+                >
+                    Button A
+                </CustomButton>
+                <CustomButton
+                    onClick={openModalBHandler}
+                    variant={'orange'}
+                >
+                    Button B
+                </CustomButton>
+            </div>
+            <ModalA
+                showModalA={showModalA}
+                onlyEven={onlyEven}
+                onClose={closeModalHandler}
+                onUsContactsClick={usContactsClickHandler}
+                onAllContactsClick={allContactsClickHandler}
+                onOnlyEvenClick={setOnlyEven}
+            />
+            <ModalB
+                showModalB={showModalB}
+                onlyEven={onlyEven}
+                onClose={closeModalHandler}
+                onUsContactsClick={usContactsClickHandler}
+                onAllContactsClick={allContactsClickHandler}
+                onOnlyEvenClick={setOnlyEven}
+            />
+        </div>
+    );
 }
 
 export default App;

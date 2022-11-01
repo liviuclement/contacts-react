@@ -1,0 +1,37 @@
+.contactItem {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: 15px;
+  border-bottom: 1px solid #e1e1e1;
+
+  &:hover {
+    background-color: #eeeeee;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  p {
+    margin: 10px 0 0;
+    font-size: 14px;
+  }
+
+  .idBadge {
+    font-size: 12px;
+    font-weight: 600;
+    background-color: #4c2180;
+    color: white;
+    border-radius: 16px;
+    height: min-content;
+    padding: 3px 5px;
+  }
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+}
