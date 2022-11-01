@@ -1,4 +1,4 @@
-import React, { Children, PropsWithChildren, ReactChildren, ReactComponentElement } from 'react';
+import React, { PropsWithChildren } from 'react';
 import styles from './Modal.module.scss';
 
 interface ModalProps {

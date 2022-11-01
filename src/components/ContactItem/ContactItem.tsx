@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import styles from './ContactItem.module.scss';
-import Modal from "../Modal/Modal";
-import ContactModalBody from "../ContactModal/Body";
 
 interface Props {
     id: number,

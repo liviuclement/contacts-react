@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import styles from './Body.module.scss';
 import ContactList from "../ContactList/ContactList";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";

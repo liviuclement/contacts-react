@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import styles from './ContactList.module.scss';
 import ContactItem from "../ContactItem/ContactItem";
 import { Contact } from "../../types";
